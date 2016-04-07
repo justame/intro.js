@@ -5,7 +5,6 @@
  *
  * Copyright (C) 2013 usabli.ca - A weekend project by Afshin Mehrabani (@afshinmeh)
  */
-
 (function (root, factory) {
   if (typeof exports === 'object') {
     // CommonJS
@@ -88,21 +87,34 @@
 
     if (this._options.steps) {
       //use steps passed programmatically
-      for (var i = 0, stepsLength = this._options.steps.length; i < stepsLength; i++) {
-        var currentItem = _cloneObject(this._options.steps[i]);
+      this._options.steps.forEach(function(step , i){
+        var elementSelector;
+        var currentItem = _cloneObject(self._options.steps[i]);
+
+
         //set the step
         currentItem.step = introItems.length + 1;
         //use querySelector function only when developer used CSS selector
         if (typeof(currentItem.element) === 'string') {
           //grab the element with given selector from the page
-          currentItem.element = document.querySelector(currentItem.element);
+
+          elementSelector = currentItem.element;
+          Object.defineProperty(currentItem, 'element', {
+            get: function(){
+              return document.querySelector(elementSelector);
+            },
+            set: function(val) {
+              elementSelector = val;
+            }
+          });
+          // currentItem.element = document.querySelector(currentItem.element);
         }
 
         //intro without element
-        if (typeof(currentItem.element) === 'undefined' || currentItem.element == null) {
+        if (currentItem.orphan) {
           var floatingElementQuery = document.querySelector(".introjsFloatingElement");
 
-          if (floatingElementQuery == null) {
+          if (floatingElementQuery === null) {
             floatingElementQuery = document.createElement('div');
             floatingElementQuery.className = 'introjsFloatingElement';
 
@@ -113,10 +125,14 @@
           currentItem.position = 'floating';
         }
 
-        if (currentItem.element != null) {
-          introItems.push(currentItem);
+        if(currentItem.element === null){
+          console.warn('element not found');
         }
-      }
+
+        // if (currentItem.element != null) {
+          introItems.push(currentItem);
+        // }
+      })
 
     } else {
       //use steps from data-* annotations
@@ -301,6 +317,7 @@
    * @method _nextStep
    */
   function _nextStep() {
+    var onBeforeShowPromise;
     this._direction = 'forward';
 
     if (typeof (this._currentStep) === 'undefined') {
@@ -320,13 +337,26 @@
     }
 
     var nextStep = this._introItems[this._currentStep];
-    if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-      this._introBeforeChangeCallback.call(this, nextStep.element);
+
+    if (typeof (nextStep.onBeforeShow) !== 'undefined') {
+      onBeforeShowPromise = nextStep.onBeforeShow.call(nextStep, nextStep, this);
+    }else if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
+      onBeforeShowPromise = this._introBeforeChangeCallback.call(this, nextStep.element);
     }
 
-    _showElement.call(this, nextStep);
+    if(isPromise(onBeforeShowPromise)){
+      onBeforeShowPromise.then(function(){
+        _showElement.call(this, nextStep);
+      }.bind(this));
+    }else{
+      _showElement.call(this, nextStep);
+    }
   }
 
+
+  function isPromise(obj){
+    return obj && !!obj.then;
+  }
   /**
    * Go to previous step on intro
    *
@@ -1033,14 +1063,18 @@
         top = rect.bottom - (rect.bottom - rect.top),
         bottom = rect.bottom - winHeight;
 
-      //Scroll up
-      if (top < 0 || targetElement.element.clientHeight > winHeight) {
-        window.scrollBy(0, top - 30); // 30px padding from edge to look nice
 
-      //Scroll down
-      } else {
-        window.scrollBy(0, bottom + 100); // 70px + 30px padding from edge to look nice
-      }
+      $(targetElement.element).ScrollTo({
+        duration: 0
+      });
+      // //Scroll up
+      // if (top < 0 || targetElement.element.clientHeight > winHeight) {
+      //   window.scrollBy(0, top - 30); // 30px padding from edge to look nice
+      //
+      // //Scroll down
+      // } else {
+      //   window.scrollBy(0, bottom + 100); // 70px + 30px padding from edge to look nice
+      // }
     }
 
     if (typeof (this._introAfterChangeCallback) !== 'undefined') {
