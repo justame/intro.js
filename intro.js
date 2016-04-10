@@ -824,7 +824,7 @@
       }
 
       //remove old classes
-      var oldShowElement = document.querySelector('.introjs-showElement');
+      var oldShowElement = document.querySelector('.introjs-showElement') || $('<div>').get(0);
       oldShowElement.className = oldShowElement.className.replace(/introjs-[a-zA-Z]+/g, '').replace(/^\s+|\s+$/g, '');
 
       //we should wait until the CSS3 transition is competed (it's 0.3 sec) to prevent incorrect `height` and `width` calculation
