@@ -1,3 +1,7 @@
+.tour-step-wrapper {
+    padding: 0px 10px 20px;
+}
+
 .tour-step-title {
     padding-bottom: 10px;
     text-align: center;
@@ -9,6 +13,18 @@
     text-align: center;
     font-size: 0.9rem;
     color: #777777;
+}
+
+.tour-step-button-bar {
+    text-align: center;
+    padding-top: 20px;
+}
+
+.tour-step-next-button {
+    background-color: #3899ec;
+    padding: 6px 45px;
+    border-radius: 20px;
+    color: #fff;
 }
 
 .introjs-overlay {
@@ -203,7 +219,7 @@ tr.introjs-showElement > th {
   padding: 10px;
   background-color: white;
   min-width: 200px;
-  max-width: 650px;
+  max-width: 500px;
   border-radius: 3px;
   box-shadow: 0 1px 10px rgba(0,0,0,.4);
   -webkit-transition: opacity 0.1s ease-out;
