@@ -31,10 +31,16 @@
     background-color: #3899ec;
     color: #fff;
 }
+.tour-step-next-button:hover {
+  background-color: #4eb7f5;
+}
 .tour-step-prev-button {
   border: 1px solid #3899ec;
   color: #3899ec;
   background-color: #fff;
+}
+.tour-step-prev-button:hover {
+  background-color: #eaf7ff;
 }
 
 .introjs-overlay {
