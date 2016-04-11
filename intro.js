@@ -370,12 +370,22 @@
       return false;
     }
 
+    var onBeforeShowPromise;
     var nextStep = this._introItems[--this._currentStep];
-    if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
-      this._introBeforeChangeCallback.call(this, nextStep.element);
+    if (typeof (nextStep.onBeforeShow) !== 'undefined') {
+      onBeforeShowPromise = nextStep.onBeforeShow.call(nextStep, nextStep, this);
+    }
+    else if (typeof (this._introBeforeChangeCallback) !== 'undefined') {
+      onBeforeShowPromise = this._introBeforeChangeCallback.call(this, nextStep.element);
     }
 
-    _showElement.call(this, nextStep);
+    if(isPromise(onBeforeShowPromise)){
+      onBeforeShowPromise.then(function(){
+        _showElement.call(this, nextStep);
+      }.bind(this));
+    }else{
+      _showElement.call(this, nextStep);
+    }
   }
 
   /**
