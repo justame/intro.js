@@ -20,11 +20,21 @@
     padding-top: 20px;
 }
 
+.tour-step-button {
+  padding: 6px 45px;
+  border-radius: 20px;
+  display: inline;
+  margin-left: 10px;
+  width: 130px;
+}
 .tour-step-next-button {
     background-color: #3899ec;
-    padding: 6px 45px;
-    border-radius: 20px;
     color: #fff;
+}
+.tour-step-prev-button {
+  border: 1px solid #3899ec;
+  color: #3899ec;
+  background-color: #fff;
 }
 
 .introjs-overlay {
