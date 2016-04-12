@@ -896,7 +896,7 @@
       arrowLayer.className = 'introjs-arrow';
 
       tooltipTextLayer.className = 'introjs-tooltiptext';
-      tooltipTextLayer.innerHTML = targetElement.intro;
+      $(tooltipTextLayer).html(targetElement.intro);
 
       bulletsLayer.className = 'introjs-bullets';
 
