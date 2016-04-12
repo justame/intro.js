@@ -1074,9 +1074,14 @@
         bottom = rect.bottom - winHeight;
 
 
-      $(targetElement.element).ScrollTo({
-        duration: 0
-      });
+      // $(targetElement.element).scroll({
+      //   duration: 0
+      // });
+
+      $('html, body').animate({
+        scrollTop: $(targetElement.element).offset().top
+      }, 100);
+
       // //Scroll up
       // if (top < 0 || targetElement.element.clientHeight > winHeight) {
       //   window.scrollBy(0, top - 30); // 30px padding from edge to look nice
