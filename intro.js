@@ -1090,6 +1090,10 @@
     if (typeof (this._introAfterChangeCallback) !== 'undefined') {
       this._introAfterChangeCallback.call(this, targetElement.element);
     }
+
+    if(typeof (targetElement.onAfterShow) !== 'undefined'){
+      targetElement.onAfterShow.call(this, targetElement);
+    }
   }
 
   /**
@@ -1721,6 +1725,9 @@
     addHints: function() {
       _populateHints.call(this, this._targetElement);
       return this;
+    },
+    getCurrentStep(){
+      return this._currentStep;
     }
   };
 
