@@ -1726,7 +1726,7 @@
       _populateHints.call(this, this._targetElement);
       return this;
     },
-    getCurrentStep(){
+    getCurrentStep: function(){
       return this._currentStep;
     }
   };
