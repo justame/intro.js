@@ -847,7 +847,7 @@
           oldHelperNumberLayer.innerHTML = targetElement.step;
         }
         //set current tooltip text
-        oldtooltipLayer.innerHTML = targetElement.intro;
+        $(oldtooltipLayer).html(targetElement.intro);
         //set the tooltip position
         oldtooltipContainer.style.display = "block";
         _placeTooltip.call(self, targetElement.element, oldtooltipContainer, oldArrowLayer, oldHelperNumberLayer);
