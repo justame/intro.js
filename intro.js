@@ -107,7 +107,7 @@
 
 
         function onAfterShow(){
-          if(base.currentStep){
+          if(base.currentStep && base.currentStep.onAfterShow){
             base.currentStep.onAfterShow(base.currentStep);
           }
         }
