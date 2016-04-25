@@ -20,10 +20,15 @@
         function Hint(){
           var tooltip;
           var that = this;
+          var targetElement;
           this.element =  null;
 
           this.hideTooltip = function(){
             tooltip.hide();
+          };
+
+          this.setTarget = function(element){
+            targetElement = element;
           };
 
           this.showTooltip = function(){
@@ -31,6 +36,28 @@
           };
 
           this.setPosition = function(position){
+            var xPos = position.split(' ')[0];
+            var yPos = position.split(' ')[1];
+            var targetBoundingClientRect = $(targetElement).get(0).getBoundingClientRect();
+            var newOffset = {};
+
+            if(xPos === 'left'){
+              newOffset.left = targetBoundingClientRect.left;
+            }else if(xPos === 'center'){
+              newOffset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (that.element.width() / 2);
+            }else if(xPos === 'right'){
+              newOffset.left = targetBoundingClientRect.right - that.element.width();
+            }
+
+            if(yPos === 'top'){
+              newOffset.top = targetBoundingClientRect.top;
+            }else if(yPos === 'center'){
+              newOffset.top = (targetBoundingClientRect.top + (targetBoundingClientRect.height / 2)) - (that.element.height() / 2);
+            }else if(yPos === 'bottom'){
+              newOffset.top = targetBoundingClientRect.bottom - that.element.height();
+            }
+
+            that.element.offset(newOffset);
           };
 
           this.setTooltipPosition = function(position){
@@ -127,18 +154,15 @@
         function showStep(step){
           var _showStep = function(){
             hint =  hint || createHint();
+            backdrop =  backdrop || createBackdrop();
+
+            hint.setTarget(step.element || $('body'));
             hint.setPosition(step.hintPosition);
             hint.setTooltipPosition(step.tooltipPosition);
             hint.setContent(step.intro);
-            backdrop =  backdrop || createBackdrop();
 
             var showPromise = hint.showTooltip();
 
-            if(step.element){
-              repositionElement(hint.element , step.element );
-            }else{
-              repositionElement(hint.element , $('body'));
-            }
             highlightElement(step.element);
 
             return showPromise;
