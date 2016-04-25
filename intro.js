@@ -40,7 +40,11 @@
 
           this.setContent = function(content){
             tooltip.html(content);
-          }
+          };
+
+          this.destroy = function(){
+            this.element.remove();
+          };
 
 
           function init(){
@@ -112,6 +116,14 @@
           }
         }
 
+        function cleanup(){
+          hint.destroy();
+          backdrop.remove();
+
+          hint = null;
+          backdrop = null;
+        }
+
         function showStep(step){
           var _showStep = function(){
             hint =  hint || createHint();
@@ -171,6 +183,11 @@
         base.start = function(){
           currentStepIndex = 0;
           showStep(base.currentStep);
+        };
+
+        base.stop = function(){
+          currentStepIndex = 0;
+          cleanup();
         };
 
         // Run initializer
