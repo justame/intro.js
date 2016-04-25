@@ -17,10 +17,45 @@
             // Put your initialization code here
         };
 
+        function Hint(){
+          var tooltip;
+          var that = this;
+          this.element =  null;
+
+          this.hideTooltip = function(){
+            tooltip.hide();
+          };
+
+          this.showTooltip = function(){
+            return $.when(tooltip.show(1000));
+          };
+
+          this.setPosition = function(position){
+          };
+
+          this.setTooltipPosition = function(position){
+            tooltip.attr('class', 'intro-tooltip');
+            tooltip.addClass(position);
+          };
+
+          this.setContent = function(content){
+            tooltip.html(content);
+          }
+
+
+          function init(){
+            tooltip = $('<div>')
+                          .addClass('intro-tooltip');
+            that.element = $('<div class="intro-hint"><div class="intro-circle"></div></div>');
+            that.element.append(tooltip);
+          }
+
+          init.call(this);
+        }
+
         function createHint(){
-          var hint = $('<div>')
-                        .addClass('intro-hint');
-          $('body').append(hint);
+          var hint = new Hint();
+          $('body').append(hint.element);
           return hint;
         }
 
@@ -42,6 +77,7 @@
 
         function unhighlighElement(element){
           $(element).removeClass('intro-element');
+          $(element).parents('.intro-fixparent').removeClass('intro-fixparent');
         }
 
         function highlightElement(element){
@@ -66,22 +102,44 @@
 
         function hideStep(step){
           unhighlighElement(step.element);
-          //clean parent
+          hint.hideTooltip();
+        }
+
+
+        function onAfterShow(){
+          if(base.currentStep){
+            base.currentStep.onAfterShow(base.currentStep);
+          }
         }
 
         function showStep(step){
           var _showStep = function(){
             hint =  hint || createHint();
+            hint.setPosition(step.hintPosition);
+            hint.setTooltipPosition(step.tooltipPosition);
+            hint.setContent(step.intro);
             backdrop =  backdrop || createBackdrop();
-            repositionElement(hint, step.element);
+
+            var showPromise = hint.showTooltip();
+
+            if(step.element){
+              repositionElement(hint.element , step.element );
+            }else{
+              repositionElement(hint.element , $('body'));
+            }
             highlightElement(step.element);
+
+            return showPromise;
           };
 
-          if(base.options.onBeforeShow){
-            base.options.onBeforeShow(step)
-              .then(_showStep);
+          var beforeShowCallback = step.onBeforeShow || base.options.onBeforeShow;
+          if(beforeShowCallback){
+            beforeShowCallback(step)
+              .then(_showStep)
+                .then(onAfterShow);
           }else{
-            _showStep();
+            _showStep()
+              .then(onAfterShow);
           }
         }
 
@@ -98,13 +156,15 @@
         };
 
         base.previousStep = function(){
-
+          hideStep(base.currentStep);
+          currentStepIndex = currentStepIndex - 1;
+          showStep(base.currentStep);
         };
 
         base.goToStep = function(step){
         };
 
-        base.setOptions = function(option, value){
+        base.setOption = function(option, value){
           base.options[option] = value;
         };
 
