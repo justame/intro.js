@@ -1,4 +1,4 @@
-/* global jQuery, setTimeout*/
+/* global jQuery*/
 'use strict';
 
 (function($){
@@ -13,8 +13,6 @@
 
         base.init = function(){
             base.options = $.extend({},$.introJs.defaultOptions, options);
-
-            // Put your initialization code here
         };
 
         function innerPositionElement(element, target, position, duration){
@@ -53,25 +51,43 @@
           return defer.promise();
         }
 
-        function outerPositionElement(element, target, position){
+        function convertOuterPositionToOffset(element, target, position){
           var targetBoundingClientRect = $(target).get(0).getBoundingClientRect();
-          var newOffset = {};
+          var offset = {};
 
           if(position === 'top'){
-            newOffset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (element.outerWidth() / 2);
-            newOffset.top = targetBoundingClientRect.top - element.outerHeight();
+            offset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (element.outerWidth() / 2);
+            offset.top = targetBoundingClientRect.top - element.outerHeight();
           }else if(position === 'right'){
-            newOffset.left = targetBoundingClientRect.right;
-            newOffset.top = targetBoundingClientRect.top - (element.outerHeight() / 2);
+            offset.left = targetBoundingClientRect.right;
+            offset.top = targetBoundingClientRect.top - (element.outerHeight() / 2) + (targetBoundingClientRect.height / 2);
           }else if(position === 'bottom'){
-            newOffset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (element.outerWidth() / 2);
-            newOffset.top = targetBoundingClientRect.bottom;
+            offset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (element.outerWidth() / 2);
+            offset.top = targetBoundingClientRect.bottom;
           }else if(position === 'left'){
-            newOffset.left = targetBoundingClientRect.left - element.outerWidth();
-            newOffset.top = targetBoundingClientRect.top - (element.outerHeight() / 2);
+            offset.left = targetBoundingClientRect.left - element.outerWidth();
+            offset.top = targetBoundingClientRect.top - (element.outerHeight() / 2) + (targetBoundingClientRect.height / 2);
           }
+          return offset;
+        }
 
-          return element.offset(newOffset);
+        function fitOffsetToScreen(offset, width, height){
+          var bodyBoundingClientRect = $('body').get(0).getBoundingClientRect();
+          var delta;
+          if((offset.left + width) > bodyBoundingClientRect.right){
+            delta = (bodyBoundingClientRect.right - (offset.left + width));
+            offset.left = offset.left + delta;
+          }else if(offset.left < bodyBoundingClientRect.left){
+            delta = bodyBoundingClientRect.left - offset.left;
+            offset.left = offset.left + delta;
+          }
+          return offset;
+        }
+
+        function outerPositionElement(element, target, position){
+          var offset = convertOuterPositionToOffset(element, target, position);
+          offset = fitOffsetToScreen(offset, element.outerWidth(), element.outerHeight());
+          return element.offset(offset);
         }
 
 
@@ -83,9 +99,7 @@
           var hintPosition;
           var wasRendered = false;
 
-          function fitToScreen(xPos, yPos){
 
-          }
 
 
 
@@ -156,17 +170,6 @@
 
           init.call(this);
         }
-
-
-
-        // function repositionElement(stepElement, targetElement){
-        //   var targetBoundingClientRect = $(targetElement).get(0).getBoundingClientRect();
-        //
-        //   $(stepElement).offset({
-        //     top: targetBoundingClientRect.top + (targetBoundingClientRect.height / 2) - (stepElement.height() / 2),
-        //     left: targetBoundingClientRect.left + (targetBoundingClientRect.width / 2) - (stepElement.width() / 2)
-        //   });
-        // }
 
         function createBackdrop(){
           var backdrop = $('<div>')
