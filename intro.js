@@ -1,4 +1,4 @@
-/* global jQuery */
+/* global jQuery, setTimeout*/
 'use strict';
 
 (function($){
@@ -17,10 +17,78 @@
             // Put your initialization code here
         };
 
+        function innerPositionElement(element, target, position, duration){
+          var defer = jQuery.Deferred();
+          var xPos = position.split(' ')[0];
+          var yPos = position.split(' ')[1];
+          var targetBoundingClientRect = $(target).get(0).getBoundingClientRect();
+          var newOffset = {};
+
+          xPos = xPos || 'center';
+          yPos = yPos || 'center';
+
+          if(xPos === 'left'){
+            newOffset.left = targetBoundingClientRect.left;
+          }else if(xPos === 'center'){
+            newOffset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (element.outerWidth() / 2);
+          }else if(xPos === 'right'){
+            newOffset.left = targetBoundingClientRect.right - element.outerWidth();
+          }
+
+          if(yPos === 'top'){
+            newOffset.top = targetBoundingClientRect.top;
+          }else if(yPos === 'center'){
+            newOffset.top = (targetBoundingClientRect.top + (targetBoundingClientRect.height / 2)) - (element.outerHeight() / 2);
+          }else if(yPos === 'bottom'){
+            newOffset.top = targetBoundingClientRect.bottom - element.outerHeight();
+          }
+
+          element.animate(newOffset, {
+            duration: duration,
+            complete: function(){
+              defer.resolve();
+            }
+          });
+
+          return defer.promise();
+        }
+
+        function outerPositionElement(element, target, position){
+          var targetBoundingClientRect = $(target).get(0).getBoundingClientRect();
+          var newOffset = {};
+
+          if(position === 'top'){
+            newOffset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (element.outerWidth() / 2);
+            newOffset.top = targetBoundingClientRect.top - element.outerHeight();
+          }else if(position === 'right'){
+            newOffset.left = targetBoundingClientRect.right;
+            newOffset.top = targetBoundingClientRect.top - (element.outerHeight() / 2);
+          }else if(position === 'bottom'){
+            newOffset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (element.outerWidth() / 2);
+            newOffset.top = targetBoundingClientRect.bottom;
+          }else if(position === 'left'){
+            newOffset.left = targetBoundingClientRect.left - element.outerWidth();
+            newOffset.top = targetBoundingClientRect.top - (element.outerHeight() / 2);
+          }
+
+          return element.offset(newOffset);
+        }
+
+
         function Hint(){
           var tooltip;
           var that = this;
           var targetElement;
+          var tooltipPosition;
+          var hintPosition;
+          var wasRendered = false;
+
+          function fitToScreen(xPos, yPos){
+
+          }
+
+
+
           this.element =  null;
 
           this.hideTooltip = function(){
@@ -28,76 +96,77 @@
           };
 
           this.setTarget = function(element){
-            targetElement = element;
-          };
-
-          this.showTooltip = function(){
-            return $.when(tooltip.show(1000));
+            targetElement = $(element);
           };
 
           this.setPosition = function(position){
-            var xPos = position.split(' ')[0];
-            var yPos = position.split(' ')[1];
-            var targetBoundingClientRect = $(targetElement).get(0).getBoundingClientRect();
-            var newOffset = {};
-
-            if(xPos === 'left'){
-              newOffset.left = targetBoundingClientRect.left;
-            }else if(xPos === 'center'){
-              newOffset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (that.element.width() / 2);
-            }else if(xPos === 'right'){
-              newOffset.left = targetBoundingClientRect.right - that.element.width();
-            }
-
-            if(yPos === 'top'){
-              newOffset.top = targetBoundingClientRect.top;
-            }else if(yPos === 'center'){
-              newOffset.top = (targetBoundingClientRect.top + (targetBoundingClientRect.height / 2)) - (that.element.height() / 2);
-            }else if(yPos === 'bottom'){
-              newOffset.top = targetBoundingClientRect.bottom - that.element.height();
-            }
-
-            that.element.offset(newOffset);
+            hintPosition = position;
           };
 
           this.setTooltipPosition = function(position){
-            tooltip.attr('class', 'intro-tooltip');
-            tooltip.addClass(position);
+            tooltipPosition = position;
           };
 
           this.setContent = function(content){
-            tooltip.html(content);
+            tooltip.find('.intro-tooltip-content').html(content);
           };
 
           this.destroy = function(){
             this.element.remove();
           };
 
+          this.render = function(){
+            var defer = jQuery.Deferred();
+            var duration = wasRendered ? 500 : 0;
+
+            that.element.show();
+            innerPositionElement(that.element, targetElement, hintPosition, duration).then(function(){
+              tooltip.css('opacity', 0).show();
+              outerPositionElement(tooltip, that.element, tooltipPosition);
+              tooltip.animate({'opacity':  1});
+              defer.resolve();
+            });
+            wasRendered = true;
+            return defer.promise();
+          };
+
+          function createTooltip(){
+            var tooltip = $('<div><div class="intro-tooltip-content"></div><div class="intro-tooltip-arrow"></div></div>')
+                          .addClass('intro-tooltip');
+            tooltip.hide();
+            $('body').append(tooltip);
+            return tooltip;
+          }
+
+          function createHint(){
+            var hint = $('<div class="intro-hint"><div class="intro-circle"></div></div>');
+            hint.hide();
+            $('body').append(hint);
+            return hint;
+          }
 
           function init(){
-            tooltip = $('<div>')
-                          .addClass('intro-tooltip');
-            that.element = $('<div class="intro-hint"><div class="intro-circle"></div></div>');
-            that.element.append(tooltip);
+            that.element = createHint();
+            tooltip = createTooltip();
+
+            $(that.element).bind('transitionend', function(){
+
+            });
           }
 
           init.call(this);
         }
 
-        function createHint(){
-          var hint = new Hint();
-          $('body').append(hint.element);
-          return hint;
-        }
 
-        function repositionElement(stepElement, targetElement){
-          var targetBoundingClientRect = $(targetElement).get(0).getBoundingClientRect();
 
-          $(stepElement).offset({
-            top: targetBoundingClientRect.top + (targetBoundingClientRect.height / 2) - (stepElement.height() / 2),
-            left: targetBoundingClientRect.left + (targetBoundingClientRect.width / 2) - (stepElement.width() / 2)
-          });
-        }
+        // function repositionElement(stepElement, targetElement){
+        //   var targetBoundingClientRect = $(targetElement).get(0).getBoundingClientRect();
+        //
+        //   $(stepElement).offset({
+        //     top: targetBoundingClientRect.top + (targetBoundingClientRect.height / 2) - (stepElement.height() / 2),
+        //     left: targetBoundingClientRect.left + (targetBoundingClientRect.width / 2) - (stepElement.width() / 2)
+        //   });
+        // }
 
         function createBackdrop(){
           var backdrop = $('<div>')
@@ -153,19 +222,15 @@
 
         function showStep(step){
           var _showStep = function(){
-            hint =  hint || createHint();
+            hint =  hint ||  new Hint();
             backdrop =  backdrop || createBackdrop();
 
             hint.setTarget(step.element || $('body'));
             hint.setPosition(step.hintPosition);
             hint.setTooltipPosition(step.tooltipPosition);
             hint.setContent(step.intro);
-
-            var showPromise = hint.showTooltip();
-
             highlightElement(step.element);
-
-            return showPromise;
+            return hint.render();
           };
 
           var beforeShowCallback = step.onBeforeShow || base.options.onBeforeShow;

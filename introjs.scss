@@ -1,11 +1,59 @@
+// --------------------------------------------------------
+// arrows
+// --------------------------------------------------------
+// $direction: top, left, right, bottom, top-left, top-right, bottom-left, bottom-right
+// $color: hex, rgb or rbga
+// $size: px or em
+// @example
+// .element{
+//     @include arrow(top, #000, 50px);
+// }
+
+$arrow-size-border: 5px;
+$arrow-size: $arrow-size-border * 2;
+
+@mixin arrow($direction, $color, $size){
+    display: block;
+    height: 0;
+    width: 0;
+
+    @if $direction == 'top' {
+        border-left: $size solid transparent;
+    	border-right: $size solid transparent;
+    	border-bottom: $size solid $color;
+    } @else if $direction == 'right' {
+        border-top: $size solid transparent;
+        border-bottom: $size solid transparent;
+    	border-left: $size solid $color;
+    } @else if $direction == 'bottom' {
+        border-top: $size solid $color;
+        border-right: $size solid transparent;
+        border-left: $size solid transparent;
+    } @else if $direction == 'left' {
+        border-top: $size solid transparent;
+    	border-right: $size solid $color;
+    	border-bottom: $size solid transparent;
+    } @else if $direction == 'top-left' {
+        border-top: $size solid $color;
+        border-right: $size solid transparent;
+    } @else if $direction == 'top-right' {
+        border-top: $size solid $color;
+        border-left: $size solid transparent;
+    } @else if $direction == 'bottom-left' {
+        border-bottom: $size solid $color;
+        border-right: $size solid transparent;
+    } @else if $direction == 'bottom-right' {
+        border-bottom: $size solid $color;
+        border-left: $size solid transparent;
+    }
+}
+
 /* intro */
 .intro-hint {
   position: absolute;
   width: 40px;
   height: 40px;
-  transition: top 0.5s ease-out, left 0.5s ease-out;
   z-index: 1100;
-  pointer-events: none;
 
   > .intro-circle {
     background: #FF3B3B;
@@ -13,41 +61,69 @@
     border-radius: 10000px;
     width: 40px;
     height: 40px;
+    pointer-events: none;
   }
 
-  .intro-tooltip {
+
+}
+.intro-tooltip {
+  position: absolute;
+  min-width: 200px;
+  min-height: 200px;
+  background: rgba(#5F2D4A, .8);
+  color: #FFF;
+  border: solid 2px blue;
+  z-index: 1200;
+
+  .intro-tooltip-arrow{
+    display: block;
     position: absolute;
-    min-width: 500px;
-    min-height: 300px;
-    background: rgba(#5F2D4A, .8);
-    color: #FFF;
+  }
 
-    &.right {
-      top: 50%;
-      transform: translateY(-50%);
-      left: calc(100% + 12px);
+  &.right {
+    top: 50%;
+    transform: translateY(-50%);
+    left: calc(100% + 12px);
+    .intro-tooltip-arrow {
+      @include arrow('left', red, $arrow-size-border);
+      left: -($arrow-size / 2);
+      top: calc(50% - #{$arrow-size / 2});
     }
+  }
 
-    &.left {
-      top: 50%;
-      right: calc(100% + 13px );
-      transform: translateY(-50%);
-    }
-
-    &.bottom {
-      top: calc(100% + 13px);
+  &.left {
+    top: 50%;
+    right: calc(100% + 13px );
+    transform: translateY(-50%);
+    .intro-tooltip-arrow {
+      @include arrow('right', red, $arrow-size-border);
       left: 100%;
-      transform: translateX(-50%);
+      top: calc(50% - #{$arrow-size / 2});
     }
+  }
 
-    &.top {
-      bottom: calc(100% + 13px);
-      left: 100%;
-      transform: translateX(-50%);
+  &.bottom {
+    top: calc(100% + 13px);
+    left: 50%;
+    transform: translateX(-50%);
+    .intro-tooltip-arrow {
+      @include arrow('top', red, $arrow-size-border);
+      left: calc(50% - #{$arrow-size / 2});
+      top: -($arrow-size / 2);
+    }
+  }
+
+  &.top {
+    bottom: calc(100% + 13px);
+    left: 50%;
+    transform: translateX(-50%);
+    .intro-tooltip-arrow {
+      @include arrow('bottom', red, $arrow-size-border);
+      left: calc(50% - #{($arrow-size / 2)});
+      top: 100%;
     }
   }
 }
-
 .intro-element {
   z-index: 1100 !important;
 }
