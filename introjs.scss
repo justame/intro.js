@@ -9,7 +9,7 @@
 //     @include arrow(top, #000, 50px);
 // }
 
-$arrow-size-border: 5px;
+$arrow-size-border: 10px;
 $arrow-size: $arrow-size-border * 2;
 
 @mixin arrow($direction, $color, $size){
@@ -80,15 +80,27 @@ $arrow-size: $arrow-size-border * 2;
     position: absolute;
   }
 
+  .intro-tooltip-arrow {
+    &[position=right]{
+      @include arrow('left', red, $arrow-size-border);
+    }
+    &[position=left]{
+      @include arrow('right', red, $arrow-size-border);
+    }
+    &[position=bottom]{
+      @include arrow('top', red, $arrow-size-border);
+    }
+    &[position=top]{
+      @include arrow('bottom', red, $arrow-size-border);
+      top: 0;
+    }
+  }
+
   &.right {
     top: 50%;
     transform: translateY(-50%);
     left: calc(100% + 12px);
-    .intro-tooltip-arrow {
-      @include arrow('left', red, $arrow-size-border);
-      left: -($arrow-size / 2);
-      top: calc(50% - #{$arrow-size / 2});
-    }
+
   }
 
   &.left {
@@ -96,9 +108,7 @@ $arrow-size: $arrow-size-border * 2;
     right: calc(100% + 13px );
     transform: translateY(-50%);
     .intro-tooltip-arrow {
-      @include arrow('right', red, $arrow-size-border);
-      left: 100%;
-      top: calc(50% - #{$arrow-size / 2});
+
     }
   }
 
@@ -107,9 +117,7 @@ $arrow-size: $arrow-size-border * 2;
     left: 50%;
     transform: translateX(-50%);
     .intro-tooltip-arrow {
-      @include arrow('top', red, $arrow-size-border);
-      left: calc(50% - #{$arrow-size / 2});
-      top: -($arrow-size / 2);
+
     }
   }
 
@@ -118,9 +126,7 @@ $arrow-size: $arrow-size-border * 2;
     left: 50%;
     transform: translateX(-50%);
     .intro-tooltip-arrow {
-      @include arrow('bottom', red, $arrow-size-border);
-      left: calc(50% - #{($arrow-size / 2)});
-      top: 100%;
+
     }
   }
 }

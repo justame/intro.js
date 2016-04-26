@@ -71,7 +71,7 @@
           return offset;
         }
 
-        function fitOffsetToScreen(offset, width, height){
+        function fitOffsetToScreen(offset, width){
           var bodyBoundingClientRect = $('body').get(0).getBoundingClientRect();
           var delta;
           if((offset.left + width) > bodyBoundingClientRect.right){
@@ -86,9 +86,11 @@
 
         function outerPositionElement(element, target, position){
           var offset = convertOuterPositionToOffset(element, target, position);
-          offset = fitOffsetToScreen(offset, element.outerWidth(), element.outerHeight());
+          offset = fitOffsetToScreen(offset, element.outerWidth());
           return element.offset(offset);
         }
+
+
 
 
         function Hint(){
@@ -99,9 +101,39 @@
           var hintPosition;
           var wasRendered = false;
 
+          function getTooltipArrowElement(){
+            return tooltip.find('.intro-tooltip-arrow');
+          }
 
+          function difference(a, b) {
+             return Math.abs(a - b);
+           }
 
+          function createTooltip(){
+            var tooltip = $('<div><div class="intro-tooltip-content"></div><div class="intro-tooltip-arrow"></div></div>')
+                          .addClass('intro-tooltip');
+            tooltip.hide();
+            $('body').append(tooltip);
+            return tooltip;
+          }
 
+          function repositionTooltipArrow(){
+              var tooltipArrowElement = getTooltipArrowElement();
+              tooltipArrowElement.css({'left': 0});
+              var elementBoundingClientRect =  that.element.get(0).getBoundingClientRect();
+              var tooltipBoundingClientRect =  tooltip.get(0).getBoundingClientRect();
+              var delta = difference(elementBoundingClientRect.left, tooltipBoundingClientRect.left);
+
+              tooltipArrowElement.css({left: delta});
+
+          }
+
+          function createHint(){
+            var hint = $('<div class="intro-hint"><div class="intro-circle"></div></div>');
+            hint.hide();
+            $('body').append(hint);
+            return hint;
+          }
 
           this.element =  null;
 
@@ -135,8 +167,10 @@
 
             that.element.show();
             innerPositionElement(that.element, targetElement, hintPosition, duration).then(function(){
+              getTooltipArrowElement().attr('position', tooltipPosition);
               tooltip.css('opacity', 0).show();
               outerPositionElement(tooltip, that.element, tooltipPosition);
+              repositionTooltipArrow();
               tooltip.animate({'opacity':  1});
               defer.resolve();
             });
@@ -144,20 +178,6 @@
             return defer.promise();
           };
 
-          function createTooltip(){
-            var tooltip = $('<div><div class="intro-tooltip-content"></div><div class="intro-tooltip-arrow"></div></div>')
-                          .addClass('intro-tooltip');
-            tooltip.hide();
-            $('body').append(tooltip);
-            return tooltip;
-          }
-
-          function createHint(){
-            var hint = $('<div class="intro-hint"><div class="intro-circle"></div></div>');
-            hint.hide();
-            $('body').append(hint);
-            return hint;
-          }
 
           function init(){
             that.element = createHint();
@@ -225,7 +245,7 @@
 
         function showStep(step){
           var _showStep = function(){
-            hint =  hint ||  new Hint();
+            hint =  hint || new Hint();
             backdrop =  backdrop || createBackdrop();
 
             hint.setTarget(step.element || $('body'));
