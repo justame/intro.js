@@ -294,12 +294,22 @@
           backdrop = null;
         }
 
+        function isFunction(value){
+          return (typeof value)  === 'function';
+        }
+
         function showStep(step){
           var _showStep = function(){
+            var element;
             hint =  hint || new Hint();
             backdrop =  backdrop || createBackdrop();
 
-            hint.setTarget(step.element || $('body'));
+            if(isFunction(step.element)){
+              element = step.element();
+            }else{
+              element = step.element;
+            }
+            hint.setTarget(element || $('body'));
             hint.setPosition(step.hintPosition);
             hint.setTooltipPosition(step.tooltipPosition);
             hint.setContent(step.intro);
