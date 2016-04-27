@@ -84,13 +84,13 @@
           return offset;
         }
 
-        function outerPositionElement(element, target, position){
+        function outerPositionElement(element, target, position, offsetX, offsetY){
           var offset = convertOuterPositionToOffset(element, target, position);
+          offset.left += offsetX;
+          offset.top += offsetY;
           offset = fitOffsetToScreen(offset, element.outerWidth());
           return element.offset(offset);
         }
-
-
 
 
         function Hint(){
@@ -105,10 +105,6 @@
             return tooltip.find('.intro-tooltip-arrow');
           }
 
-          function difference(a, b) {
-             return Math.abs(a - b);
-           }
-
           function createTooltip(){
             var tooltip = $('<div><div class="intro-tooltip-content"></div><div class="intro-tooltip-arrow"></div></div>')
                           .addClass('intro-tooltip');
@@ -119,13 +115,47 @@
 
           function repositionTooltipArrow(){
               var tooltipArrowElement = getTooltipArrowElement();
-              tooltipArrowElement.css({'left': 0});
               var elementBoundingClientRect =  that.element.get(0).getBoundingClientRect();
-              var tooltipBoundingClientRect =  tooltip.get(0).getBoundingClientRect();
-              var delta = difference(elementBoundingClientRect.left, tooltipBoundingClientRect.left);
+              var left;
+              var top;
 
-              tooltipArrowElement.css({left: delta});
-
+              if(tooltipPosition === 'bottom'){
+                left =  elementBoundingClientRect.left + (elementBoundingClientRect.width / 2) - (tooltipArrowElement.outerWidth() / 2);
+                top = -(tooltipArrowElement.outerHeight());
+                tooltipArrowElement.offset({
+                  left: left
+                });
+                tooltipArrowElement.css({
+                  top: top
+                });
+              }else if(tooltipPosition === 'top'){
+                left =  elementBoundingClientRect.left + (elementBoundingClientRect.width / 2) - (tooltipArrowElement.outerWidth() / 2);
+                top = '100%';
+                tooltipArrowElement.offset({
+                  left: left
+                });
+                tooltipArrowElement.css({
+                  top: top
+                });
+              }else if(tooltipPosition === 'left'){
+                left =  '100%';
+                top = elementBoundingClientRect.top + (elementBoundingClientRect.height / 2) - (tooltipArrowElement.outerHeight() / 2);
+                tooltipArrowElement.css({
+                  left: left
+                });
+                tooltipArrowElement.offset({
+                  top: top
+                });
+              }else if(tooltipPosition === 'right'){
+                left =  -(tooltipArrowElement.outerWidth());
+                top = elementBoundingClientRect.top + (elementBoundingClientRect.height / 2) - (tooltipArrowElement.outerHeight() / 2);
+                tooltipArrowElement.css({
+                  left: left
+                });
+                tooltipArrowElement.offset({
+                  top: top
+                });
+              }
           }
 
           function createHint(){
@@ -133,6 +163,22 @@
             hint.hide();
             $('body').append(hint);
             return hint;
+          }
+
+          function repositionTooltip(){
+            var tooltipArrowElement = getTooltipArrowElement();
+            var offsetX = 0, offsetY = 0;
+            if(tooltipPosition === 'top'){
+              offsetY = -(tooltipArrowElement.outerHeight());
+            }else if(tooltipPosition === 'bottom'){
+              offsetY = tooltipArrowElement.outerHeight();
+            }else if(tooltipPosition === 'right'){
+              offsetX = tooltipArrowElement.outerWidth();
+            }else if(tooltipPosition === 'left'){
+              offsetX = -(tooltipArrowElement.outerWidth());
+            }
+            outerPositionElement(tooltip, that.element, tooltipPosition, offsetX, offsetY);
+            repositionTooltipArrow();
           }
 
           this.element =  null;
@@ -169,8 +215,7 @@
             innerPositionElement(that.element, targetElement, hintPosition, duration).then(function(){
               getTooltipArrowElement().attr('position', tooltipPosition);
               tooltip.css('opacity', 0).show();
-              outerPositionElement(tooltip, that.element, tooltipPosition);
-              repositionTooltipArrow();
+              repositionTooltip();
               tooltip.animate({'opacity':  1});
               defer.resolve();
             });
@@ -285,15 +330,17 @@
           showStep(base.currentStep);
         };
 
-        base.goToStep = function(step){
+        base.goToStep = function(stepIndex) {
+          currentStepIndex = stepIndex;
+          showStep(base.currentStep);
         };
 
         base.setOption = function(option, value){
           base.options[option] = value;
         };
 
-        base.start = function(){
-          currentStepIndex = 0;
+        base.start = function(stepIndex){
+          currentStepIndex = stepIndex || 0;
           showStep(base.currentStep);
         };
 

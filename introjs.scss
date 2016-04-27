@@ -50,17 +50,19 @@ $arrow-size: $arrow-size-border * 2;
 
 /* intro */
 .intro-hint {
+  $hint-size: 60px;
   position: absolute;
-  width: 40px;
-  height: 40px;
+  width: $hint-size;
+  height: $hint-size;
   z-index: 1100;
+
 
   > .intro-circle {
     background: #FF3B3B;
     box-shadow: 0 0 1px 13px #FF7B7B;
     border-radius: 10000px;
-    width: 40px;
-    height: 40px;
+    width: $hint-size;
+    height: $hint-size;
     pointer-events: none;
   }
 
@@ -82,53 +84,53 @@ $arrow-size: $arrow-size-border * 2;
 
   .intro-tooltip-arrow {
     &[position=right]{
-      @include arrow('left', red, $arrow-size-border);
+      @include arrow('left', blue, $arrow-size-border);
     }
     &[position=left]{
-      @include arrow('right', red, $arrow-size-border);
+      @include arrow('right', blue, $arrow-size-border);
     }
     &[position=bottom]{
-      @include arrow('top', red, $arrow-size-border);
+      @include arrow('top', blue, $arrow-size-border);
     }
     &[position=top]{
-      @include arrow('bottom', red, $arrow-size-border);
+      @include arrow('bottom', blue, $arrow-size-border);
       top: 0;
     }
   }
-
-  &.right {
-    top: 50%;
-    transform: translateY(-50%);
-    left: calc(100% + 12px);
-
-  }
-
-  &.left {
-    top: 50%;
-    right: calc(100% + 13px );
-    transform: translateY(-50%);
-    .intro-tooltip-arrow {
-
-    }
-  }
-
-  &.bottom {
-    top: calc(100% + 13px);
-    left: 50%;
-    transform: translateX(-50%);
-    .intro-tooltip-arrow {
-
-    }
-  }
-
-  &.top {
-    bottom: calc(100% + 13px);
-    left: 50%;
-    transform: translateX(-50%);
-    .intro-tooltip-arrow {
-
-    }
-  }
+  //
+  //&.right {
+  //  top: 50%;
+  //  transform: translateY(-50%);
+  //  left: calc(100% + 12px);
+  //
+  //}
+  //
+  //&.left {
+  //  top: 50%;
+  //  right: calc(100% + 13px );
+  //  transform: translateY(-50%);
+  //  .intro-tooltip-arrow {
+  //
+  //  }
+  //}
+  //
+  //&.bottom {
+  //  top: calc(100% + 13px);
+  //  left: 50%;
+  //  transform: translateX(-50%);
+  //  .intro-tooltip-arrow {
+  //
+  //  }
+  //}
+  //
+  //&.top {
+  //  bottom: calc(100% + 13px);
+  //  left: 50%;
+  //  transform: translateX(-50%);
+  //  .intro-tooltip-arrow {
+  //
+  //  }
+  //}
 }
 .intro-element {
   z-index: 1100 !important;
