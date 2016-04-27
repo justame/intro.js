@@ -300,16 +300,19 @@
 
         function showStep(step){
           var _showStep = function(){
-            var element;
+            var intro;
             hint =  hint || new Hint();
             backdrop =  backdrop || createBackdrop();
 
-            if(isFunction(step.element)){
-              element = step.element();
+            if(isFunction(step.intro)){
+              intro = step.intro();
             }else{
-              element = step.element;
+              intro = step.intro;
             }
-            hint.setTarget(element || $('body'));
+            if(step.element){
+              $(step.element).get(0).scrollIntoView();
+            }
+            hint.setTarget(step.element || $('body'));
             hint.setPosition(step.hintPosition);
             hint.setTooltipPosition(step.tooltipPosition);
             hint.setContent(step.intro);
