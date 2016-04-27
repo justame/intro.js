@@ -41,12 +41,17 @@
             newOffset.top = targetBoundingClientRect.bottom - element.outerHeight();
           }
 
-          element.animate(newOffset, {
-            duration: duration,
-            complete: function(){
+          if(duration === 0){
+            defer.resolve();
+          }else{
+            $(element).one('transitionend', function(){
               defer.resolve();
-            }
-          });
+            });
+          }
+
+          var durationInSecs = duration / 1000;
+          element.css('transition', 'left ' + durationInSecs + 's ease-in-out, top ' + durationInSecs + 's ease-in-out');
+          element.offset(newOffset);
 
           return defer.promise();
         }
@@ -210,7 +215,7 @@
 
           this.render = function(){
             var defer = jQuery.Deferred();
-            var duration = wasRendered ? 500 : 0;
+            var duration = wasRendered ? 800 : 0;
 
             that.element.show();
             innerPositionElement(that.element, targetElement, hintPosition, duration).then(function(){
