@@ -205,6 +205,7 @@
 
           this.destroy = function(){
             this.element.remove();
+            tooltip.remove();
           };
 
           this.render = function(){
