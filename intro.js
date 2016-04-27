@@ -20,6 +20,7 @@
           var xPos = position.split(' ')[0];
           var yPos = position.split(' ')[1];
           var targetBoundingClientRect = $(target).get(0).getBoundingClientRect();
+          var oldOffset = $(element).get(0).getBoundingClientRect();
           var newOffset = {};
 
           xPos = xPos || 'center';
@@ -41,7 +42,7 @@
             newOffset.top = targetBoundingClientRect.bottom - element.outerHeight();
           }
 
-          if(duration === 0){
+          if(duration === 0 || ((oldOffset.left === newOffset.left) && (oldOffset.top === newOffset.top))){
             defer.resolve();
           }else{
             $(element).one('transitionend', function(){
