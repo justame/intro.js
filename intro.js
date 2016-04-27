@@ -306,7 +306,7 @@
             backdrop =  backdrop || createBackdrop();
 
             if(isFunction(step.intro)){
-              intro = step.intro();
+              intro = step.intro(step.template);
             }else{
               intro = step.intro;
             }
@@ -316,7 +316,7 @@
             hint.setTarget(step.element || $('body'));
             hint.setPosition(step.hintPosition);
             hint.setTooltipPosition(step.tooltipPosition);
-            hint.setContent(step.intro);
+            hint.setContent(intro);
             highlightElement(step.element);
             return hint.render();
           };
