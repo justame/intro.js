@@ -165,11 +165,11 @@
           }
 
           function createHint(){
-            var hintClasses = 'intro-hint';
+            var hintClasses = 'intro-circle';
             if (base.options.hintClass) {
               hintClasses += ' ' + base.options.hintClass;
             }
-            var hint = $('<div class="'+ hintClasses +'"><div class="intro-circle"></div></div>');
+            var hint = $('<div class="intro-hint"><div class="'+ hintClasses +'"></div></div>');
             hint.hide();
             $('body').append(hint);
             return hint;
