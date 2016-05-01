@@ -9,7 +9,7 @@
 //     @include arrow(top, #000, 50px);
 // }
 
-$arrow-size-border: 10px;
+$arrow-size-border: 8px;
 $arrow-size: $arrow-size-border * 2;
 
 @mixin arrow($direction, $color, $size){
@@ -55,18 +55,8 @@ $arrow-size: $arrow-size-border * 2;
   width: $hint-size;
   height: $hint-size;
   z-index: 1100;
-
-
-  > .intro-circle {
-    background: #FF3B3B;
-    box-shadow: 0 0 1px 13px #FF7B7B;
-    border-radius: 10000px;
-    width: $hint-size;
-    height: $hint-size;
-    pointer-events: none;
-  }
-
-
+  pointer-events: none;
+  background: #FF3B3B;
 }
 .intro-tooltip {
   position: absolute;
@@ -133,7 +123,7 @@ $arrow-size: $arrow-size-border * 2;
   //}
 }
 .intro-element {
-  z-index: 1100 !important;
+  z-index: 110000 !important;
 }
 
 .intro-backdrop {
