@@ -333,8 +333,8 @@
         function hideStep(step){
           unhighlighElement(step.element);
           if(_.isArray(step.highlightElements)){
-            _.each(step.highlightElements, function(highlightElement){
-              unhighlighElement(highlightElement);
+            _.each(step.highlightElements, function(element){
+              unhighlighElement(element);
             });
           }
           hint.hideTooltip();
@@ -380,8 +380,8 @@
 
             highlightElement(step.element, base.options.highlightInteractivity);
             if(_.isArray(step.highlightElements)){
-              _.each(step.highlightElements, function(highlightElement){
-                highlightElement(highlightElement, base.options.highlightInteractivity);
+              _.each(step.highlightElements, function(element){
+                highlightElement(element, base.options.highlightInteractivity);
               });
             }
             return hint.render();
