@@ -1,4 +1,4 @@
-/* global jQuery*/
+/* global jQuery,setInterval, clearInterval*/
 'use strict';
 
 (function($){
@@ -14,6 +14,22 @@
         base.init = function(){
             base.options = $.extend({},$.introJs.defaultOptions, options);
         };
+
+        function trackElementChange(element){
+          var boundingClientRectOld = $(element).get(0).getBoundingClientRect();
+          var interval = setInterval(function _checkForChange(){
+            var boundingClientRectNew = $(element).get(0).getBoundingClientRect();
+            if(!angular.equals(boundingClientRectOld, boundingClientRectNew)){
+              $(element).trigger('changed.introjs');
+            }
+            boundingClientRectOld = boundingClientRectNew;
+          }, 1000);
+          $(element).data('introjsInterval', interval);
+        }
+
+        function untrackElementChange(element){
+          clearInterval($(element).data('introjsInterval'));
+        }
 
         function innerPositionElement(element, target, position, duration){
           var defer = jQuery.Deferred();
@@ -92,8 +108,8 @@
 
         function outerPositionElement(element, target, position, offsetX, offsetY){
           var offset = convertOuterPositionToOffset(element, target, position);
-          offset.left += offsetX;
-          offset.top += offsetY;
+          offset.left += Number(offsetX || 0);
+          offset.top += Number(offsetY || 0);
           offset = fitOffsetToScreen(offset, element.outerWidth());
           return element.offset(offset);
         }
@@ -115,6 +131,7 @@
             var tooltip = $('<div><div class="intro-tooltip-content"></div><div class="intro-tooltip-arrow"></div></div>')
                           .addClass('intro-tooltip');
             tooltip.hide();
+
             $('body').append(tooltip);
             return tooltip;
           }
@@ -165,19 +182,25 @@
           }
 
           function createHint(){
-            var hintClasses = 'intro-circle';
+            var hint = $('<div class="intro-hint"></div>');
             if (base.options.hintClass) {
-              hintClasses += ' ' + base.options.hintClass;
+              hint.addClass(base.options.hintClass);
             }
-            var hint = $('<div class="intro-hint"><div class="'+ hintClasses +'"></div></div>');
             hint.hide();
             $('body').append(hint);
+            trackElementChange(hint);
+            $(hint).on('changed.introjs', that.render);
             return hint;
           }
 
           function repositionTooltip(){
             var tooltipArrowElement = getTooltipArrowElement();
             var offsetX = 0, offsetY = 0;
+
+            if(tooltip.css('display') === 'none'){
+              tooltip.show();
+            }
+
             if(tooltipPosition === 'top'){
               offsetY = -(tooltipArrowElement.outerHeight());
             }else if(tooltipPosition === 'bottom'){
@@ -195,6 +218,7 @@
 
           this.hideTooltip = function(){
             tooltip.hide();
+            tooltip.css('opacity', 0);
           };
 
           this.setTarget = function(element){
@@ -214,20 +238,30 @@
           };
 
           this.destroy = function(){
+            untrackElementChange(this.element);
             this.element.remove();
             tooltip.remove();
           };
 
+          this.isVisible = function(){
+            return Number($(tooltip).css('opacity')) > 0;
+          };
+
           this.render = function(){
             var defer = jQuery.Deferred();
-            var duration = wasRendered ? 800 : 0;
+            var duration = wasRendered ? 500 : 0;
 
             that.element.show();
             innerPositionElement(that.element, targetElement, hintPosition, duration).then(function(){
               getTooltipArrowElement().attr('position', tooltipPosition);
-              tooltip.css('opacity', 0).show();
               repositionTooltip();
-              tooltip.animate({'opacity':  1});
+
+              if(!that.isVisible()){
+                tooltip.css('opacity', 0).show();
+                tooltip.animate({'opacity':  1});
+              }else{
+                tooltip.show();
+              }
               defer.resolve();
             });
             wasRendered = true;
@@ -256,11 +290,19 @@
 
         function unhighlighElement(element){
           $(element).removeClass('intro-element');
+          $(element).removeClass('intro-element-disabled');
+          $(element).removeClass('intro-element-relative');
           $(element).parents('.intro-fixparent').removeClass('intro-fixparent');
         }
 
-        function highlightElement(element){
+        function highlightElement(element, interactive){
           $(element).addClass('intro-element');
+          if(!interactive){
+            $(element).addClass('intro-element-disabled');
+          }
+          if($(element).css('position') === 'static'){
+            $(element).addClass('intro-element-relative');
+          }
           var parentElm = $(element).parent();
           while (parentElm.length > 0) {
             if (parentElm.get(0).tagName.toLowerCase() === 'body'){
@@ -314,14 +356,15 @@
             }else{
               intro = step.intro;
             }
+            console.log($(step.element));
             if(step.element){
-              $(step.element).get(0).scrollIntoView();
+              $(step.element).get(0).scrollIntoView(false);
             }
             hint.setTarget(step.element || $('body'));
             hint.setPosition(step.hintPosition);
             hint.setTooltipPosition(step.tooltipPosition);
             hint.setContent(intro);
-            highlightElement(step.element);
+            highlightElement(step.element, base.options.highlightInteractivity);
             return hint.render();
           };
 

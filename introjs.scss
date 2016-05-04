@@ -50,13 +50,15 @@ $arrow-size: $arrow-size-border * 2;
 
 /* intro */
 .intro-hint {
-  $hint-size: 60px;
+  $hint-size: 52px;
   position: absolute;
-  width: $hint-size;
-  height: $hint-size;
-  z-index: 1100;
+  //width: $hint-size;
+  //height: $hint-size;
+  z-index: 110010;
   pointer-events: none;
-  background: #FF3B3B;
+  background: #FF3B3B !important;
+  opacity: 0.8 !important;
+  position: absolute !important;
 }
 .intro-tooltip {
   position: absolute;
@@ -124,6 +126,24 @@ $arrow-size: $arrow-size-border * 2;
 }
 .intro-element {
   z-index: 110000 !important;
+  box-shadow: 0 0 1px 1px red;
+
+  &.intro-element-disabled:after{
+    content: ' ';
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+    background: rgba(blue, 0.3);
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
+  &.intro-element-relative{
+    position: relative;
+  }
 }
 
 .intro-backdrop {
@@ -142,4 +162,9 @@ $arrow-size: $arrow-size-border * 2;
   z-index: auto !important;
   opacity: 1.0 !important;
   transform: none !important;
+}
+
+.intro-tooltip-content{
+  height: 270px;
+  overflow: auto;
 }
