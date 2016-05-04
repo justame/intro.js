@@ -25,6 +25,12 @@
             boundingClientRectOld = boundingClientRectNew;
           }, 1000);
           $(element).data('introjsInterval', interval);
+
+          return (function(interval){
+            return function(){
+              clearInterval(interval);
+            };
+          }(interval));
         }
 
         function untrackElementChange(element){
@@ -133,6 +139,8 @@
             tooltip.hide();
 
             $('body').append(tooltip);
+            trackElementChange(tooltip);
+            $(tooltip).on('changed.introjs', repositionTooltip);
             return tooltip;
           }
 
@@ -210,7 +218,7 @@
             }else if(tooltipPosition === 'left'){
               offsetX = -(tooltipArrowElement.outerWidth());
             }
-            outerPositionElement(tooltip, that.element, tooltipPosition, offsetX, offsetY);
+            outerPositionElement(tooltip, targetElement, tooltipPosition, offsetX, offsetY);
             repositionTooltipArrow();
           }
 
@@ -239,6 +247,7 @@
 
           this.destroy = function(){
             untrackElementChange(this.element);
+            untrackElementChange(tooltip);
             this.element.remove();
             tooltip.remove();
           };
@@ -356,7 +365,6 @@
             }else{
               intro = step.intro;
             }
-            console.log($(step.element));
             if(step.element){
               $(step.element).get(0).scrollIntoView(false);
             }

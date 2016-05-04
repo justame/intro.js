@@ -11,6 +11,8 @@
 
 $arrow-size-border: 8px;
 $arrow-size: $arrow-size-border * 2;
+$intro-element-z-index: 1000000;
+$intro-backdrop-z-index: $intro-element-z-index - 100;
 
 @mixin arrow($direction, $color, $size){
     display: block;
@@ -54,7 +56,7 @@ $arrow-size: $arrow-size-border * 2;
   position: absolute;
   //width: $hint-size;
   //height: $hint-size;
-  z-index: 110010;
+  z-index: $intro-element-z-index;
   pointer-events: none;
   position: absolute !important;
 }
@@ -65,7 +67,7 @@ $arrow-size: $arrow-size-border * 2;
   background: rgba(#5F2D4A, .8);
   color: #FFF;
   border: solid 2px blue;
-  z-index: 1200;
+  z-index: $intro-element-z-index;
 
   .intro-tooltip-arrow{
     display: block;
@@ -87,46 +89,18 @@ $arrow-size: $arrow-size-border * 2;
       top: 0;
     }
   }
-  //
-  //&.right {
-  //  top: 50%;
-  //  transform: translateY(-50%);
-  //  left: calc(100% + 12px);
-  //
-  //}
-  //
-  //&.left {
-  //  top: 50%;
-  //  right: calc(100% + 13px );
-  //  transform: translateY(-50%);
-  //  .intro-tooltip-arrow {
-  //
-  //  }
-  //}
-  //
-  //&.bottom {
-  //  top: calc(100% + 13px);
-  //  left: 50%;
-  //  transform: translateX(-50%);
-  //  .intro-tooltip-arrow {
-  //
-  //  }
-  //}
-  //
-  //&.top {
-  //  bottom: calc(100% + 13px);
-  //  left: 50%;
-  //  transform: translateX(-50%);
-  //  .intro-tooltip-arrow {
-  //
-  //  }
-  //}
 }
 .intro-element {
-  z-index: 110000 !important;
+  z-index: $intro-element-z-index !important;
   box-shadow: 0 0 1px 1px red;
 
-  &.intro-element-disabled:after{
+  &.intro-element-disabled{
+    pointer-events: none;
+    *{
+      pointer-events: none;
+    }
+  }
+  &.intro-element-disabled:before{
     content: ' ';
     left: 0;
     top: 0;
@@ -153,7 +127,7 @@ $arrow-size: $arrow-size-border * 2;
   right: 0;
   width: 100%;
   height: 100%;
-  z-index: 1000;
+  z-index: $intro-backdrop-z-index;
 }
 
 .intro-fixparent {
