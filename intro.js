@@ -332,6 +332,11 @@
 
         function hideStep(step){
           unhighlighElement(step.element);
+          if(_.isArray(step.highlightElements)){
+            _.each(step.highlightElements, function(highlightElement){
+              unhighlighElement(highlightElement);
+            });
+          }
           hint.hideTooltip();
         }
 
@@ -372,7 +377,13 @@
             hint.setPosition(step.hintPosition);
             hint.setTooltipPosition(step.tooltipPosition);
             hint.setContent(intro);
+
             highlightElement(step.element, base.options.highlightInteractivity);
+            if(_.isArray(step.highlightElements)){
+              _.each(step.highlightElements, function(highlightElement){
+                highlightElement(highlightElement, base.options.highlightInteractivity);
+              });
+            }
             return hint.render();
           };
 
