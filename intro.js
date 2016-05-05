@@ -382,8 +382,8 @@
             //   }
             //   selectedElement = $(step.element).eq(step.dynamicElementCounter);
             // }
-             if(step.element){
-              selectedElement = $(step.element);
+             if(step.calculatedElementSelector){
+              selectedElement = $(step.calculatedElementSelector);
             }
 
             $(selectedElement).get(0).scrollIntoView(false);
@@ -393,18 +393,7 @@
             hint.setTooltipPosition(step.tooltipPosition);
             hint.setContent(intro);
 
-            if(step.dynamicElement){
-              if(typeof step.dynamicElementCounter === 'undefined'){
-                step.dynamicElementCounter = 0;
-              }
-              if($(step.element).length - 1 === step.dynamicElementCounter){
-                step.dynamicElementCounter = 0;
-              }
-              highlightElement(selectedElement, base.options.highlightInteractivity);
-              step.dynamicElementCounter++;
-            }else{
-              highlightElement(selectedElement, base.options.highlightInteractivity);
-            }
+            highlightElement(selectedElement, base.options.highlightInteractivity);
 
             if(_.isArray(step.highlightElements)){
               _.each(step.highlightElements, function(element){
