@@ -373,15 +373,16 @@
             }else{
               intro = step.intro;
             }
-            if(step.dynamicElement){
-              if(typeof step.dynamicElementCounter === 'undefined'){
-                step.dynamicElementCounter = 0;
-              }
-              if($(step.element).length - 1 === step.dynamicElementCounter){
-                step.dynamicElementCounter = 0;
-              }
-              selectedElement = $(step.element).eq(step.dynamicElementCounter);
-            }else if(step.element){
+            // if(step.dynamicElement){
+            //   if(typeof step.dynamicElementCounter === 'undefined'){
+            //     step.dynamicElementCounter = 0;
+            //   }
+            //   if($(step.element).length - 1 === step.dynamicElementCounter){
+            //     step.dynamicElementCounter = 0;
+            //   }
+            //   selectedElement = $(step.element).eq(step.dynamicElementCounter);
+            // }
+             if(step.element){
               selectedElement = $(step.element);
             }
 
