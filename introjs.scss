@@ -11,7 +11,7 @@
 
 $arrow-size-border: 8px;
 $arrow-size: $arrow-size-border * 2;
-$intro-element-z-index: 1000000;
+$intro-element-z-index: 10000000;
 $intro-backdrop-z-index: $intro-element-z-index - 100;
 
 @mixin arrow($direction, $color, $size){
@@ -93,6 +93,7 @@ $intro-backdrop-z-index: $intro-element-z-index - 100;
 .intro-element {
   z-index: $intro-element-z-index !important;
   box-shadow: 0 0 1px 1px red;
+  opacity: 1 !important;
 
   &.intro-element-disabled{
     pointer-events: none;

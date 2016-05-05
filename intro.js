@@ -230,7 +230,9 @@
           };
 
           this.setTarget = function(element){
+            untrackElementChange(targetElement);
             targetElement = $(element);
+            trackElementChange(targetElement);
           };
 
           this.setPosition = function(position){
@@ -246,7 +248,7 @@
           };
 
           this.destroy = function(){
-            untrackElementChange(this.element);
+            untrackElementChange(that.element);
             untrackElementChange(tooltip);
             this.element.remove();
             tooltip.remove();
@@ -361,6 +363,7 @@
 
         function showStep(step){
           var _showStep = function(){
+            var selectedElement;
             var intro;
             hint =  hint || new Hint();
             backdrop =  backdrop || createBackdrop();
@@ -370,15 +373,38 @@
             }else{
               intro = step.intro;
             }
-            if(step.element){
-              $(step.element).get(0).scrollIntoView(false);
+            if(step.dynamicElement){
+              if(typeof step.dynamicElementCounter === 'undefined'){
+                step.dynamicElementCounter = 0;
+              }
+              if($(step.element).length - 1 === step.dynamicElementCounter){
+                step.dynamicElementCounter = 0;
+              }
+              selectedElement = $(step.element).eq(step.dynamicElementCounter);
+            }else if(step.element){
+              selectedElement = $(step.element);
             }
-            hint.setTarget(step.element || $('body'));
+
+            $(selectedElement).get(0).scrollIntoView(false);
+
+            hint.setTarget(selectedElement || $('body'));
             hint.setPosition(step.hintPosition);
             hint.setTooltipPosition(step.tooltipPosition);
             hint.setContent(intro);
 
-            highlightElement(step.element, base.options.highlightInteractivity);
+            if(step.dynamicElement){
+              if(typeof step.dynamicElementCounter === 'undefined'){
+                step.dynamicElementCounter = 0;
+              }
+              if($(step.element).length - 1 === step.dynamicElementCounter){
+                step.dynamicElementCounter = 0;
+              }
+              highlightElement(selectedElement, base.options.highlightInteractivity);
+              step.dynamicElementCounter++;
+            }else{
+              highlightElement(selectedElement, base.options.highlightInteractivity);
+            }
+
             if(_.isArray(step.highlightElements)){
               _.each(step.highlightElements, function(element){
                 highlightElement(element, base.options.highlightInteractivity);
@@ -405,9 +431,7 @@
         });
 
         base.nextStep = function(){
-          hideStep(base.currentStep);
-          currentStepIndex = currentStepIndex + 1;
-          showStep(base.currentStep);
+          base.goToStep(currentStepIndex + 1);
         };
 
         base.previousStep = function(){
@@ -417,6 +441,7 @@
         };
 
         base.goToStep = function(stepIndex) {
+          hideStep(base.currentStep);
           currentStepIndex = stepIndex;
           showStep(base.currentStep);
         };
