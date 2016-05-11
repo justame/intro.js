@@ -1,4 +1,4 @@
-/* global jQuery,setInterval, clearInterval*/
+/* global jQuery,setInterval, clearInterval, window*/
 'use strict';
 
 (function($){
@@ -15,15 +15,28 @@
             base.options = $.extend({},$.introJs.defaultOptions, options);
         };
 
-        function trackElementChange(element){
-          var boundingClientRectOld = $(element).get(0).getBoundingClientRect();
+        function round(boundingClientRect){
+          var boundingClientRectNew = {};
+          boundingClientRectNew.left = Number(boundingClientRect.left.toFixed(0));
+          boundingClientRectNew.right = Number(boundingClientRect.right.toFixed(0));
+          boundingClientRectNew.top = Number(boundingClientRect.top.toFixed(0));
+          boundingClientRectNew.bottom = Number(boundingClientRect.bottom.toFixed(0));
+          boundingClientRectNew.width = Number(boundingClientRect.width.toFixed(0));
+          boundingClientRectNew.height = Number(boundingClientRect.height.toFixed(0));
+          return boundingClientRectNew;
+        }
+
+        function trackElementChange(element, time){
+          var boundingClientRectOld = round($(element).get(0).getBoundingClientRect());
           var interval = setInterval(function _checkForChange(){
-            var boundingClientRectNew = $(element).get(0).getBoundingClientRect();
-            if(!angular.equals(boundingClientRectOld, boundingClientRectNew)){
-              $(element).trigger('changed.introjs');
-            }
-            boundingClientRectOld = boundingClientRectNew;
-          }, 1000);
+            window.requestAnimationFrame(function(){
+              var boundingClientRectNew = round($(element).get(0).getBoundingClientRect());
+              if(!angular.equals(boundingClientRectOld, boundingClientRectNew)){
+                $(element).trigger('changed.introjs');
+              }
+              boundingClientRectOld = boundingClientRectNew;
+            });
+          }, time || 500);
           $(element).data('introjsInterval', interval);
 
           return (function(interval){
@@ -73,7 +86,7 @@
           }
 
           var durationInSecs = duration / 1000;
-          element.css('transition', 'left ' + durationInSecs + 's ease-in-out, top ' + durationInSecs + 's ease-in-out');
+          element.css('transition', 'left ' + durationInSecs + 's linear, top ' + durationInSecs + 's linear');
           element.offset(newOffset);
 
           return defer.promise();
@@ -112,11 +125,20 @@
           return offset;
         }
 
+        // refactor
         function outerPositionElement(element, target, position, offsetX, offsetY){
           var offset = convertOuterPositionToOffset(element, target, position);
+          var temp = element.clone(false, false);
+          temp.css({left: 0, opacity: 0, zIndex: -1}).appendTo('body');
+          temp.show();
+          var width  = temp.outerWidth();
+          element.css({width: width});
+
           offset.left += Number(offsetX || 0);
           offset.top += Number(offsetY || 0);
           offset = fitOffsetToScreen(offset, element.outerWidth());
+          element.css({width: ''});
+          $(temp).remove();
           return element.offset(offset);
         }
 
@@ -139,7 +161,7 @@
             tooltip.hide();
 
             $('body').append(tooltip);
-            trackElementChange(tooltip);
+            trackElementChange(tooltip, 100);
             $(tooltip).on('changed.introjs', repositionTooltip);
             return tooltip;
           }
@@ -196,7 +218,7 @@
             }
             hint.hide();
             $('body').append(hint);
-            trackElementChange(hint);
+            trackElementChange(hint, 1000);
             $(hint).on('changed.introjs', that.render);
             return hint;
           }
@@ -232,7 +254,7 @@
           this.setTarget = function(element){
             untrackElementChange(targetElement);
             targetElement = $(element);
-            trackElementChange(targetElement);
+            trackElementChange(targetElement, 1000);
           };
 
           this.setPosition = function(position){
@@ -352,7 +374,9 @@
         function cleanup(){
           hint.destroy();
           backdrop.remove();
-
+          if(base.currentStep.element){
+            unhighlighElement(base.currentStep.element);
+          }
           hint = null;
           backdrop = null;
         }
@@ -385,7 +409,7 @@
              if(step.calculatedElementSelector){
               selectedElement = $(step.calculatedElementSelector);
             }
-
+            console.log('selectedElement: ', selectedElement);
             $(selectedElement).get(0).scrollIntoView(false);
 
             hint.setTarget(selectedElement || $('body'));
@@ -446,8 +470,8 @@
         };
 
         base.stop = function(){
-          currentStepIndex = 0;
           cleanup();
+          currentStepIndex = 0;
         };
 
         // Run initializer

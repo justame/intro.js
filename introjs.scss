@@ -8,48 +8,59 @@
 // .element{
 //     @include arrow(top, #000, 50px);
 // }
-
 $arrow-size-border: 8px;
 $arrow-size: $arrow-size-border * 2;
 $intro-element-z-index: 10000000;
 $intro-backdrop-z-index: $intro-element-z-index - 100;
+@mixin arrow($direction, $color, $size) {
+  display: block;
+  height: 0;
+  width: 0;
 
-@mixin arrow($direction, $color, $size){
-    display: block;
-    height: 0;
-    width: 0;
+  @if $direction == 'top' {
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+    border-bottom: $size solid $color;
+  }
 
-    @if $direction == 'top' {
-        border-left: $size solid transparent;
-    	border-right: $size solid transparent;
-    	border-bottom: $size solid $color;
-    } @else if $direction == 'right' {
-        border-top: $size solid transparent;
-        border-bottom: $size solid transparent;
-    	border-left: $size solid $color;
-    } @else if $direction == 'bottom' {
-        border-top: $size solid $color;
-        border-right: $size solid transparent;
-        border-left: $size solid transparent;
-    } @else if $direction == 'left' {
-        border-top: $size solid transparent;
-    	border-right: $size solid $color;
-    	border-bottom: $size solid transparent;
-    } @else if $direction == 'top-left' {
-        border-top: $size solid $color;
-        border-right: $size solid transparent;
-    } @else if $direction == 'top-right' {
-        border-top: $size solid $color;
-        border-left: $size solid transparent;
-    } @else if $direction == 'bottom-left' {
-        border-bottom: $size solid $color;
-        border-right: $size solid transparent;
-    } @else if $direction == 'bottom-right' {
-        border-bottom: $size solid $color;
-        border-left: $size solid transparent;
-    }
+  @else if $direction == 'right' {
+    border-top: $size solid transparent;
+    border-bottom: $size solid transparent;
+    border-left: $size solid $color;
+  }
+
+  @else if $direction == 'bottom' {
+    border-top: $size solid $color;
+    border-right: $size solid transparent;
+    border-left: $size solid transparent;
+  }
+
+  @else if $direction == 'left' {
+    border-top: $size solid transparent;
+    border-right: $size solid $color;
+    border-bottom: $size solid transparent;
+  }
+
+  @else if $direction == 'top-left' {
+    border-top: $size solid $color;
+    border-right: $size solid transparent;
+  }
+
+  @else if $direction == 'top-right' {
+    border-top: $size solid $color;
+    border-left: $size solid transparent;
+  }
+
+  @else if $direction == 'bottom-left' {
+    border-bottom: $size solid $color;
+    border-right: $size solid transparent;
+  }
+
+  @else if $direction == 'bottom-right' {
+    border-bottom: $size solid $color;
+    border-left: $size solid transparent;
+  }
 }
-
 /* intro */
 .intro-hint {
   $hint-size: 52px;
@@ -60,61 +71,63 @@ $intro-backdrop-z-index: $intro-element-z-index - 100;
   pointer-events: none;
   position: absolute !important;
 }
+
 .intro-tooltip {
   position: absolute;
-  min-width: 400px;
-  min-height: 200px;
-  background: rgba(#5F2D4A, .8);
-  color: #FFF;
-  border: solid 2px blue;
   z-index: $intro-element-z-index;
 
-  .intro-tooltip-arrow{
+  .intro-tooltip-arrow {
     display: block;
     position: absolute;
   }
 
   .intro-tooltip-arrow {
-    &[position=right]{
-      @include arrow('left', blue, $arrow-size-border);
+    &[position=right] {
+      @include arrow( 'left', blue, $arrow-size-border);
     }
-    &[position=left]{
-      @include arrow('right', blue, $arrow-size-border);
+
+    &[position=left] {
+      @include arrow( 'right', blue, $arrow-size-border);
     }
-    &[position=bottom]{
-      @include arrow('top', blue, $arrow-size-border);
+
+    &[position=bottom] {
+      @include arrow( 'top', blue, $arrow-size-border);
     }
-    &[position=top]{
-      @include arrow('bottom', blue, $arrow-size-border);
+
+    &[position=top] {
+      @include arrow( 'bottom', blue, $arrow-size-border);
       top: 0;
     }
   }
 }
+
 .intro-element {
   z-index: $intro-element-z-index !important;
-  box-shadow: 0 0 1px 1px red;
   opacity: 1 !important;
+  background-color: #FFF;
 
-  &.intro-element-disabled{
+  &.intro-element-disabled {
     pointer-events: none;
-    *{
+
+    * {
       pointer-events: none;
     }
   }
-  &.intro-element-disabled:before{
+
+  &.intro-element-disabled:before {
     content: ' ';
     left: 0;
     top: 0;
     bottom: 0;
     right: 0;
     z-index: 1;
-    background: rgba(blue, 0.3);
+    background: transparent;
     width: 100%;
     height: 100%;
     position: absolute;
   }
 
-  &.intro-element-relative{
+  &.intro-element-relative {
     position: relative;
   }
 }
@@ -135,9 +148,4 @@ $intro-backdrop-z-index: $intro-element-z-index - 100;
   z-index: auto !important;
   opacity: 1.0 !important;
   transform: none !important;
-}
-
-.intro-tooltip-content{
-  height: 270px;
-  overflow: auto;
 }
