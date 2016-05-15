@@ -128,17 +128,9 @@
         // refactor
         function outerPositionElement(element, target, position, offsetX, offsetY){
           var offset = convertOuterPositionToOffset(element, target, position);
-          var temp = element.clone(false, false);
-          temp.css({left: 0, opacity: 0, zIndex: -1}).appendTo('body');
-          temp.show();
-          var width  = temp.outerWidth();
-          element.css({width: width});
-
           offset.left += Number(offsetX || 0);
           offset.top += Number(offsetY || 0);
           offset = fitOffsetToScreen(offset, element.outerWidth());
-          element.css({width: ''});
-          $(temp).remove();
           return element.offset(offset);
         }
 
@@ -326,6 +318,8 @@
           $(element).removeClass('intro-element-disabled');
           $(element).removeClass('intro-element-relative');
           $(element).parents('.intro-fixparent').removeClass('intro-fixparent');
+          // quick hack
+          $('.intro-fixparent').removeClass('intro-fixparent');
         }
 
         function highlightElement(element, interactive){
@@ -377,6 +371,11 @@
           if(base.currentStep.element){
             unhighlighElement(base.currentStep.element);
           }
+          if(_.isArray(base.currentStep.highlightElements)){
+            _.each(base.currentStep.highlightElements, function(element){
+              unhighlighElement(element);
+            });
+          }
           hint = null;
           backdrop = null;
         }
@@ -397,19 +396,10 @@
             }else{
               intro = step.intro;
             }
-            // if(step.dynamicElement){
-            //   if(typeof step.dynamicElementCounter === 'undefined'){
-            //     step.dynamicElementCounter = 0;
-            //   }
-            //   if($(step.element).length - 1 === step.dynamicElementCounter){
-            //     step.dynamicElementCounter = 0;
-            //   }
-            //   selectedElement = $(step.element).eq(step.dynamicElementCounter);
-            // }
+
              if(step.calculatedElementSelector){
               selectedElement = $(step.calculatedElementSelector);
             }
-            console.log('selectedElement: ', selectedElement);
             $(selectedElement).get(0).scrollIntoView(false);
 
             hint.setTarget(selectedElement || $('body'));
