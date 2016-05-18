@@ -392,7 +392,7 @@
             backdrop =  backdrop || createBackdrop();
 
             if(isFunction(step.intro)){
-              intro = step.intro(step.template);
+              intro = step.intro(step);
             }else{
               intro = step.intro;
             }
