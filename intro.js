@@ -9,6 +9,7 @@
         var currentStepIndex;
         var hint;
         var backdrop;
+        var modal;
         // Access to jQuery and DOM versions of element
 
         base.init = function(){
@@ -132,6 +133,11 @@
           offset.top += Number(offsetY || 0);
           offset = fitOffsetToScreen(offset, element.outerWidth());
           return element.offset(offset);
+        }
+
+        function Modal(){
+          var that = this;
+
         }
 
 
@@ -384,6 +390,7 @@
           return (typeof value)  === 'function';
         }
 
+
         function showStep(step){
           var _showStep = function(){
             var selectedElement;
@@ -402,10 +409,13 @@
             }
             $(selectedElement).get(0).scrollIntoView(false);
 
-            hint.setTarget(selectedElement || $('body'));
-            hint.setPosition(step.hintPosition);
-            hint.setTooltipPosition(step.tooltipPosition);
-            hint.setContent(intro);
+            if(!step.modal){
+              hint.setTarget(selectedElement || $('body'));
+              hint.setPosition(step.hintPosition);
+              hint.setTooltipPosition(step.tooltipPosition);
+              hint.setContent(intro);
+            }
+
 
             highlightElement(selectedElement, base.options.highlightInteractivity);
 
@@ -414,7 +424,15 @@
                 highlightElement(element, base.options.highlightInteractivity);
               });
             }
-            return hint.render();
+
+
+
+            if(!step.modal){
+              return hint.render();
+            }else{
+
+              return jQuery.when();
+            }
           };
 
           var beforeShowCallback = step.onBeforeShow || base.options.onBeforeShow;
@@ -462,6 +480,10 @@
         base.stop = function(){
           cleanup();
           currentStepIndex = 0;
+        };
+
+        base.hideStep = function(){
+          hideStep(base.currentStep);
         };
 
         // Run initializer
