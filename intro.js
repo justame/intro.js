@@ -136,8 +136,33 @@
         }
 
         function Modal(){
-          var that = this;
+          var element;
+          var content = '';
+          var changes = {
+            content: true
+          };
 
+          function createModal(){
+            var element = $('<div>').addClass('intro-modal').appendTo('body');
+            return element;
+          }
+          this.setContent = function(val){
+            content = val;
+            changes.content = true;
+          };
+
+          this.destroy = function(){
+            $(element).remove();
+            element = null;
+          };
+
+          this.render = function(){
+            element = element || createModal();
+            if(changes.content){
+              element.html(content);
+              changes.content = false;
+            }
+          };
         }
 
 
@@ -362,6 +387,9 @@
             });
           }
           hint.hideTooltip();
+          if(modal){
+            modal.destroy();
+          }
         }
 
 
@@ -382,6 +410,11 @@
               unhighlighElement(element);
             });
           }
+
+          if(modal){
+            modal.destroy();
+          }
+          modal = null;
           hint = null;
           backdrop = null;
         }
@@ -430,7 +463,9 @@
             if(!step.modal){
               return hint.render();
             }else{
-
+              modal = new Modal();
+              modal.setContent(intro);
+              modal.render();
               return jQuery.when();
             }
           };

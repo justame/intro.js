@@ -83,19 +83,19 @@ $intro-backdrop-z-index: $intro-element-z-index - 100;
 
   .intro-tooltip-arrow {
     &[position=right] {
-      @include arrow( 'left', blue, $arrow-size-border);
+      @include arrow( 'left', #FFF, $arrow-size-border);
     }
 
     &[position=left] {
-      @include arrow( 'right', blue, $arrow-size-border);
+      @include arrow( 'right', #FFF, $arrow-size-border);
     }
 
     &[position=bottom] {
-      @include arrow( 'top', blue, $arrow-size-border);
+      @include arrow( 'top', #FFF, $arrow-size-border);
     }
 
     &[position=top] {
-      @include arrow( 'bottom', blue, $arrow-size-border);
+      @include arrow( 'bottom', #FFF, $arrow-size-border);
       top: 0;
     }
   }
@@ -148,4 +148,12 @@ $intro-backdrop-z-index: $intro-element-z-index - 100;
   z-index: auto !important;
   opacity: 1.0 !important;
   transform: none !important;
+}
+
+.intro-modal{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+  top: 50%;
+  z-index: $intro-backdrop-z-index + 100;
 }
