@@ -386,7 +386,7 @@
               unhighlighElement(element);
             });
           }
-          hint.hideTooltip();
+          hint && hint.hideTooltip();
           if(modal){
             modal.destroy();
           }
