@@ -96,7 +96,6 @@
         function convertOuterPositionToOffset(element, target, position){
           var targetBoundingClientRect = $(target).get(0).getBoundingClientRect();
           var offset = {};
-
           if(position === 'top'){
             offset.left = (targetBoundingClientRect.left + (targetBoundingClientRect.width / 2)) - (element.outerWidth() / 2);
             offset.top = targetBoundingClientRect.top - element.outerHeight();
@@ -118,21 +117,33 @@
           var delta;
           if((offset.left + width) > bodyBoundingClientRect.right){
             delta = (bodyBoundingClientRect.right - (offset.left + width));
-            offset.left = offset.left + delta;
+            offset.left = offset.left + delta - 30;
           }else if(offset.left < bodyBoundingClientRect.left){
             delta = bodyBoundingClientRect.left - offset.left;
-            offset.left = offset.left + delta;
+            offset.left = offset.left + delta + 30;
           }
           return offset;
         }
 
         // refactor
         function outerPositionElement(element, target, position, offsetX, offsetY){
+          $(element).css({
+            left: 0
+          });
+          $(element).css({
+            width: $(element).outerWidth()
+          });
+
           var offset = convertOuterPositionToOffset(element, target, position);
           offset.left += Number(offsetX || 0);
           offset.top += Number(offsetY || 0);
           offset = fitOffsetToScreen(offset, element.outerWidth());
-          return element.offset(offset);
+
+          $(element).css({
+            left: '',
+            width: ''
+          });
+          return element.css(offset);
         }
 
         function Modal(){
@@ -191,7 +202,7 @@
 
           function repositionTooltipArrow(){
               var tooltipArrowElement = getTooltipArrowElement();
-              var elementBoundingClientRect =  that.element.get(0).getBoundingClientRect();
+              var elementBoundingClientRect =  targetElement.get(0).getBoundingClientRect();
               var left;
               var top;
 
@@ -386,7 +397,9 @@
               unhighlighElement(element);
             });
           }
-          hint && hint.hideTooltip();
+          if(hint){
+            hint.hideTooltip();
+          }
           if(modal){
             modal.destroy();
           }
@@ -400,7 +413,9 @@
         }
 
         function cleanup(){
-          hint.destroy();
+          if(hint){
+            hint.destroy();
+          }
           backdrop.remove();
           if(base.currentStep.element){
             unhighlighElement(base.currentStep.element);
@@ -458,7 +473,11 @@
               });
             }
 
-
+            if(step.backdrop){
+              backdrop.show();
+            }else{
+              backdrop.hide();
+            }
 
             if(!step.modal){
               return hint.render();
