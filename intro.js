@@ -184,6 +184,9 @@
           var tooltipPosition;
           var hintPosition;
           var wasRendered = false;
+          var model = {
+            visibility : true
+          };
 
           function getTooltipArrowElement(){
             return tooltip.find('.intro-tooltip-arrow');
@@ -291,6 +294,10 @@
             trackElementChange(targetElement, 1000);
           };
 
+          this.setVisiblity = function(isVisible){
+            model.visibility = isVisible;
+          };
+
           this.setPosition = function(position){
             hintPosition = position;
           };
@@ -310,7 +317,7 @@
             tooltip.remove();
           };
 
-          this.isVisible = function(){
+          this.isTooltipVisible = function(){
             return Number($(tooltip).css('opacity')) > 0;
           };
 
@@ -323,7 +330,12 @@
               getTooltipArrowElement().attr('position', tooltipPosition);
               repositionTooltip();
 
-              if(!that.isVisible()){
+              if(model.visibility){
+                that.element.removeClass('intro-hidden');
+              }else{
+                that.element.addClass('intro-hidden');
+              }
+              if(!that.isTooltipVisible()){
                 tooltip.css('opacity', 0).show();
                 tooltip.animate({'opacity':  1});
               }else{
@@ -455,12 +467,14 @@
              if(step.calculatedElementSelector){
               selectedElement = $(step.calculatedElementSelector);
             }
+
             $(selectedElement).get(0).scrollIntoView(false);
 
             if(!step.modal){
               hint.setTarget(selectedElement || $('body'));
               hint.setPosition(step.hintPosition);
               hint.setTooltipPosition(step.tooltipPosition);
+              hint.setVisiblity(step.showHint);
               hint.setContent(intro);
             }
 
@@ -475,6 +489,9 @@
 
             if(step.backdrop){
               backdrop.show();
+              backdrop.css({
+                opacity: step.backdropOpacity
+              });
             }else{
               backdrop.hide();
             }

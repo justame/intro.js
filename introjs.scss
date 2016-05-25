@@ -157,3 +157,7 @@ $intro-backdrop-z-index: $intro-element-z-index - 100;
   top: 50%;
   z-index: $intro-backdrop-z-index + 100;
 }
+
+.intro-hidden{
+  visibility: hidden;
+}
