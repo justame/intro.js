@@ -67,7 +67,7 @@ $intro-backdrop-z-index: $intro-element-z-index - 100;
   position: absolute;
   //width: $hint-size;
   //height: $hint-size;
-  z-index: $intro-element-z-index;
+  z-index: $intro-element-z-index + 10;
   pointer-events: none;
   position: absolute !important;
 }

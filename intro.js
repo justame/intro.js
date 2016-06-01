@@ -468,7 +468,9 @@
               selectedElement = $(step.calculatedElementSelector);
             }
 
-            $(selectedElement).get(0).scrollIntoView(false);
+            if(step.scrollToElement){
+              $(selectedElement).get(0).scrollIntoView(false);
+            }
 
             if(!step.modal){
               hint.setTarget(selectedElement || $('body'));
