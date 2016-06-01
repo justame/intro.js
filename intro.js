@@ -269,13 +269,13 @@
             }
 
             if(tooltipPosition === 'top'){
-              offsetY = -(tooltipArrowElement.outerHeight());
+              offsetY = -(tooltipArrowElement.outerHeight() + 12);
             }else if(tooltipPosition === 'bottom'){
-              offsetY = tooltipArrowElement.outerHeight();
+              offsetY = tooltipArrowElement.outerHeight() + 12;
             }else if(tooltipPosition === 'right'){
-              offsetX = tooltipArrowElement.outerWidth();
+              offsetX = tooltipArrowElement.outerWidth() + 12;
             }else if(tooltipPosition === 'left'){
-              offsetX = -(tooltipArrowElement.outerWidth());
+              offsetX = -(tooltipArrowElement.outerWidth() + 12);
             }
             outerPositionElement(tooltip, targetElement, tooltipPosition, offsetX, offsetY);
             repositionTooltipArrow();
