@@ -289,9 +289,11 @@
           };
 
           this.setTarget = function(element){
+            $(targetElement).unbind('changed.introjs');
             untrackElementChange(targetElement);
             targetElement = $(element);
-            trackElementChange(targetElement, 1000);
+            $(targetElement).on('changed.introjs', that.render);
+            trackElementChange(targetElement, 300);
           };
 
           this.setVisiblity = function(isVisible){
@@ -351,6 +353,8 @@
           function init(){
             that.element = createHint();
             tooltip = createTooltip();
+
+
 
             $(that.element).bind('transitionend', function(){
 
