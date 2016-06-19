@@ -429,25 +429,29 @@
         }
 
         function cleanup(){
-          if(hint){
-            hint.destroy();
-          }
-          backdrop.remove();
-          if(base.currentStep.element){
-            unhighlighElement(base.currentStep.element);
-          }
-          if(_.isArray(base.currentStep.highlightElements)){
-            _.each(base.currentStep.highlightElements, function(element){
-              unhighlighElement(element);
-            });
-          }
+          try {
+            if(hint){
+              hint.destroy();
+            }
+            backdrop.remove();
+            if(base.currentStep.element){
+              unhighlighElement(base.currentStep.element);
+            }
+            if(_.isArray(base.currentStep.highlightElements)){
+              _.each(base.currentStep.highlightElements, function(element){
+                unhighlighElement(element);
+              });
+            }
 
-          if(modal){
-            modal.destroy();
+            if(modal){
+              modal.destroy();
+            }
+            modal = null;
+            hint = null;
+            backdrop = null;
+          } catch (e) {
+            // silent failure
           }
-          modal = null;
-          hint = null;
-          backdrop = null;
         }
 
         function isFunction(value){
